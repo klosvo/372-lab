@@ -11,7 +11,7 @@
 void initPWM();
 
 int changeDutyCycle(int dutycycle);
-void SetMOTORspeed(int result);
+void SetMOTORspeed(double result);
 
 
 #endif

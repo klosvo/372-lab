@@ -16,7 +16,10 @@ volatile stateType state = wait_press;
 
 int main()
 {
-   
+  Serial.begin(9600);
+    int valueADC = 0;
+    double voltage = 0.0;
+    bool onOff = true;
     initTimer0();
     initADC();
     initPWM();
@@ -25,12 +28,17 @@ int main()
 
     while(1)
     {
+valueADC = ADCL;
+valueADC +=( (unsigned int) ADCH<< 8);
+voltage = valueADC*(5.0/1024.0);
+
+
       /////////////////////////////////////////////////////debounce state machine
  switch(state){
         case wait_press:
         break;
         case dbpress:
-        _delay_us(100);
+        delay(100);
         state = waitrelse;
         break;
         case waitrelse:
@@ -39,11 +47,23 @@ int main()
         
         _delay_us(100);
         state = wait_press;
-    ///////////////////////////////////////////////////////////////////CHANGE OF THE DUTY CYCLE
+
+
+
+        switch(onOff){
+          case false:
+          onOff = true;
+          SetMOTORspeed(voltage);
+          break;
+          case true:
+          onOff = false;
+          break;
+        }
         break;
         }
 
-         
+       Serial.println(voltage);  
+       Serial.flush();
     }
 
     return 0;

@@ -23,8 +23,12 @@ void initPWM(){
     TCCR3B |= (1 << WGM32);
     TCCR3B &= ~(1 << WGM33);
 
-    // Inverting, from Table 17-4
-    TCCR3A |= (1 << COM3A1) | (1 << COM3A0);
+   // Noninverting, from Table 17-4
+    TCCR3A |= (1 << COM3A1);
+    TCCR3A &= ~(1 << COM3A0);
+
+   
+
 
     // Clock Prescaler set to 1 from Table 17-6
     TCCR3B |= (1 << CS30);
@@ -43,8 +47,10 @@ void initPWM(){
     TCCR4B |= (1 << WGM42);
     TCCR4B &= ~(1 << WGM43);
 
-    // Inverting, from Table 17-4
-    TCCR4A |= (1 << COM4A1) | (1 << COM4A0);
+   // Noninverting, from Table 17-4
+    TCCR4A |= (1 << COM3A1);
+    TCCR4A &= ~(1 << COM3A0);
+
 
     // Clock Prescaler set to 1 from Table 17-6
     TCCR4B |= (1 << CS40);
@@ -52,7 +58,7 @@ void initPWM(){
 }
 
 //Set motor speed and direction with count registers using information obtained by ADC 
-void SetMOTORspeed(int result) {
+void SetMOTORspeed(double result) {
     // the last thing is to set the duty cycle.     
     // duty cycle is set by dividing output compare OCR4A value by 1 + TOP value
     // the top value is (1 + 0x3FF) = 1024
@@ -60,23 +66,29 @@ void SetMOTORspeed(int result) {
     // we want a duty cycle varies based on voltage variable result
     // OCR1A = 0.60 * 1024
 
-    if(result < 2.5){
+
+ //convert result into a voltage for this to not change
+
+
+    if(result < 2.3){
         // set duty cycle
         // Tpulse/Tperiod = OCRnx/TOP
         // duty cycle varies based on voltage variable result
         // 0x3FF/4
-        OCR3A = result/100 * 0x400;
 
-    }else if (result > 2.5){
+        OCR3A = result * 0x400;
+        OCR4A = 0;
+
+    }else if (result > 2.7){
         // set duty cycle
         // Tpulse/Tperiod = OCRnx/TOP
         // duty cycle of 25%
         // 0x3FF/4
-        OCR4A = result/100 * 0x400;
-
+        OCR4A = result * 0x400;
+        OCR3A = 0;
     } else{
-        // OCR3A = 0;
-        // OCR4A = 0;
+         OCR3A = 0;
+         OCR4A = 0;
     }
 
 }
