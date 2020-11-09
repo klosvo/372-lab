@@ -30,12 +30,6 @@ void initPWM(){
     TCCR3B |= (1 << CS30);
     TCCR3B &= ~((1 << CS31) | (1 << CS32));
 
-    // set duty cycle
-    // Tpulse/Tperiod = OCRnx/TOP
-    // duty cycle of 25%
-    // 0x3FF/4
-    OCR3A = 255;
-
     //-----FOR TIMER 4-----//
 
     // set Fast PWM 10-bit mode, non-inverting
@@ -55,25 +49,27 @@ void initPWM(){
     // Clock Prescaler set to 1 from Table 17-6
     TCCR4B |= (1 << CS40);
     TCCR3B &= ~((1 << CS41) | (1 << CS42));
+}
 
-
+//Set motor speed and direction with count registers using information obtained by ADC 
+void SetMOTORspeed(int result) {
     // the last thing is to set the duty cycle.     
     // duty cycle is set by dividing output compare OCR4A value by 1 + TOP value
     // the top value is (1 + 0x3FF) = 1024
     // calculate OCR4A value => OCR4A = duty cycle(fractional number) * (1 + TOP) 
-    // we want a duty cycle = 60%
+    // we want a duty cycle varies based on voltage variable result
     // OCR1A = 0.60 * 1024
 
     // set duty cycle
     // Tpulse/Tperiod = OCRnx/TOP
     // duty cycle of 25%
     // 0x3FF/4
-    OCR4A = 255;
+    OCR4A = result/100 * 0x400;
 
-}
-
-//Set motor speed and direction with count registers using information obtained by ADC 
-void SetMOTORspeed(int result) {
-
+    // set duty cycle
+    // Tpulse/Tperiod = OCRnx/TOP
+    // duty cycle varies based on voltage variable result
+    // 0x3FF/4
+    OCR3A = result/100 * 0x400;
 
 }
