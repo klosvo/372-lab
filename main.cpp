@@ -25,45 +25,49 @@ int main()
     initPWM();
     initSwitchPD0();
     sei();
-
+    
     while(1)
     {
 valueADC = ADCL;
 valueADC +=( (unsigned int) ADCH<< 8);
-voltage = valueADC*(5.0/1024.0);
-
+//voltage = valueADC*(5.0/1024.0);
+//SetMOTORspeed(valueADC);
 
       /////////////////////////////////////////////////////debounce state machine
  switch(state){
         case wait_press:
         break;
         case dbpress:
-        delay(100);
+        delayMs(1); 
         state = waitrelse;
         break;
         case waitrelse:
+
         break;
         case dbrelse:
         
-        _delay_us(100);
+      delayMs(1);
         state = wait_press;
-
-
 
         switch(onOff){
           case false:
           onOff = true;
-          SetMOTORspeed(voltage);
+          
           break;
           case true:
           onOff = false;
           break;
         }
+
+
         break;
         }
-
-       Serial.println(voltage);  
-       Serial.flush();
+        if(onOff){ 
+       valueADC = 550;
+       }
+     SetMOTORspeed(valueADC);
+      // Serial.println(voltage);  
+      // Serial.flush();
     }
 
     return 0;

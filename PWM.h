@@ -7,11 +7,12 @@
 #define PWM_H
 
 #include <avr/io.h>
+#include <Arduino.h> 
 
 void initPWM();
 
 int changeDutyCycle(int dutycycle);
-void SetMOTORspeed(double result);
+void SetMOTORspeed(int ADCValue);
 
 
 #endif
