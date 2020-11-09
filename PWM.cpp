@@ -48,7 +48,7 @@ void initPWM(){
 
     // Clock Prescaler set to 1 from Table 17-6
     TCCR4B |= (1 << CS40);
-    TCCR3B &= ~((1 << CS41) | (1 << CS42));
+    TCCR4B &= ~((1 << CS41) | (1 << CS42));
 }
 
 //Set motor speed and direction with count registers using information obtained by ADC 
@@ -60,16 +60,23 @@ void SetMOTORspeed(int result) {
     // we want a duty cycle varies based on voltage variable result
     // OCR1A = 0.60 * 1024
 
-    // set duty cycle
-    // Tpulse/Tperiod = OCRnx/TOP
-    // duty cycle of 25%
-    // 0x3FF/4
-    OCR4A = result/100 * 0x400;
+    if(result < 2.5){
+        // set duty cycle
+        // Tpulse/Tperiod = OCRnx/TOP
+        // duty cycle varies based on voltage variable result
+        // 0x3FF/4
+        OCR3A = result/100 * 0x400;
 
-    // set duty cycle
-    // Tpulse/Tperiod = OCRnx/TOP
-    // duty cycle varies based on voltage variable result
-    // 0x3FF/4
-    OCR3A = result/100 * 0x400;
+    }else if (result > 2.5){
+        // set duty cycle
+        // Tpulse/Tperiod = OCRnx/TOP
+        // duty cycle of 25%
+        // 0x3FF/4
+        OCR4A = result/100 * 0x400;
+
+    } else{
+        // OCR3A = 0;
+        // OCR4A = 0;
+    }
 
 }
